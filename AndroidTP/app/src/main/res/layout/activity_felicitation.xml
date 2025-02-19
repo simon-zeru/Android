@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/exercice_5_felicitations_relative_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingVertical="200dp"
+    tools:context=".FelicitationActivity">
+
+    <!-- LinearLayout en haut contenant le texte et le premier bouton -->
+    <LinearLayout
+        android:id="@+id/exercice_5_felicitation_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/exercice5_text_felicitations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/felicitations"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/exercice5_choisir_une_autre_table"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choisir une autre table" />
+    </LinearLayout>
+
+    <!-- Bouton en bas pour choisir un autre exercice -->
+    <Button
+        android:id="@+id/exercice5_choisir_un_autre_exercice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choisir un autre exercice"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"/>
+</RelativeLayout>

@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Android-TP</string>
+
+    <string name="exercice1">Exercice 1</string>
+    <string name="exercice2">Exercice 2</string>
+    <string name="exercice3">Exercice 3</string>
+    <string name="exercice4">Exercice 4</string>
+    <string name="exercice5">Exercice 5</string>
+    <string name="entrez_votre_pr_nom_et_valider">Entrez votre prénom et valider</string>
+    <string name="valider">VALIDER</string>
+    <string name="ex_jean">Ex: Jean</string>
+    <string name="valider_ma_reponse">VALIDER MA REPONSE</string>
+    <string name="choisir_une_r_ponse_puis_valider">Choisir une réponse puis valider</string>
+    <string name="_1_pour_les_tudiants">+1 pour les étudiants</string>
+    <string name="_0_match_nul">0 Match nul</string>
+    <string name="_10_pour_les_enseignants">+10 pour les enseignants</string>
+    <string name="quelle_a_t_la_diff_rence_de_buts_lors_du_match_de_football_opposant_l_quipe_enseignante_du_d_partement_l_quipe_tudiante">Quelle a été la différence de buts lors du match de football opposant l\'équipe enseignante du département à l\'équipe étudiante ?</string>
+    <string name="nombre_de_victoires">Nombre de victoires :</string>
+    <string name="nombre_de_d_faites">Nombre de défaites :</string>
+    <string name="nombre_d_galit_s">Nombre d\'égalités :</string>
+    <string name="main_de_l_ordinateur">Main de l\'ordinateur</string>
+    <string name="choisir_une_main">Choisir une main</string>
+    <string name="test">TEST</string>
+    <string name="egalit">Egalité !</string>
+    <string name="victoire">Victoire !</string>
+    <string name="d_faite">Défaite !</string>
+    <string name="bravo_vous_avez_la_bonne_r_ponse">Bravo vous avez la bonne réponse !</string>
+    <string name="mauvaise_r_ponse">Mauvaise réponse...</string>
+    <string name="changer_de_prenom">CHANGER DE PRENOM</string>
+    <string name="choisir_un_autre_exercice">CHOISIR UN AUTRE EXERCICE</string>
+    <string name="choisis_ta_table_de_multiplication">Choisis ta table de multiplication</string>
+    <string name="felicitations">FELICITATIONS !!</string>
+    <string name="erreur_s">ERREUR(S) !!</string>
+</resources>

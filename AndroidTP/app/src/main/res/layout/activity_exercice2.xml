@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_margin="20dp"
+    tools:context=".Exercice2Activity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quelle_a_t_la_diff_rence_de_buts_lors_du_match_de_football_opposant_l_quipe_enseignante_du_d_partement_l_quipe_tudiante" />
+
+    <RadioGroup
+        android:id="@+id/exercice2_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+>
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/_10_pour_les_enseignants" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/_0_match_nul" />
+
+        <RadioButton
+            android:id="@+id/exercice2_bonne_reponse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/_1_pour_les_tudiants" />
+    </RadioGroup>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/exercice2_valider"
+        android:text="@string/valider_ma_reponse"
+        />
+    <TextView
+        android:id="@+id/exercice2_valider_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/choisir_une_r_ponse_puis_valider"
+        />
+</LinearLayout>
