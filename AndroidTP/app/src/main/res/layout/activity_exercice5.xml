@@ -23,6 +23,7 @@
         android:id="@+id/exercice5_submit_table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/valider"
         />
 
 </LinearLayout>

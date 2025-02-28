@@ -26,6 +26,7 @@
         android:layout_alignParentBottom="true"
         android:paddingHorizontal="80sp"
         android:paddingVertical="20sp"
+        android:layout_marginBottom="50sp"
         android:text="@string/valider" />
 
 
