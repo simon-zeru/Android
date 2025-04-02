@@ -4,28 +4,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.NumberPicker;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class AdditionActivity extends AppCompatActivity {
+public class OperationsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_addition);
 
+        // On charge le XML pour créer l'arbre graphique
+        setContentView(R.layout.activity_multiplications);
 
+        NumberPicker numberPicker = findViewById(R.id.multiplication_number_picker);
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(9);
 
         Button submitBtn = findViewById(R.id.multiplication_submit_table);
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MultiplicationsActivity.this, TableOperationActivity.class);
+                Intent intent = new Intent(OperationsActivity.this, TableOperationActivity.class);
                 intent.putExtra(TableOperationActivity.TABLE_KEY, numberPicker.getValue());
                 startActivity(intent);
             }
         });
+
     }
 }

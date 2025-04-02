@@ -3,22 +3,27 @@ package fr.iut.androidprojet.modele;
 public class TableOperation {
     private Operation[] operations;
     private OperationEnum typeOperation;
-
+    private int nbOperations;
     private static final int NB_OPERATIONS = 10;
-    public TableOperation(OperationEnum typeOperation) {
+    public TableOperation(OperationEnum typeOperation, int nbOperations) {
         this.typeOperation = typeOperation;
-        this.operations = new Operation[NB_OPERATIONS];
+        this.operations = new Operation[nbOperations];
+        this.nbOperations = nbOperations;
         initialisation();
     }
 
+    public TableOperation(OperationEnum typeOperation) {
+        this(typeOperation, NB_OPERATIONS);
+    }
+
     private void initialisation() {
-        for (int i = 0; i < NB_OPERATIONS; i++) {
+        for (int i = 0; i < nbOperations; i++) {
             operations[i] = typeOperation.getOperation(OperationUtilitaire.randomDouble(), OperationUtilitaire.randomDouble());
         }
     }
 
     public int getNbOperations() {
-        return operations.length;
+        return nbOperations;
     }
 
     public Operation[] getOperations() {

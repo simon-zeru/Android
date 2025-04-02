@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/table_multiplication"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".TableOperationActivity">
+
+    <!-- Template pour une ligne de calcul -->
+    <LinearLayout
+        android:id="@+id/template_ligne"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <!-- Texte affichant l'opération -->
+        <TextView
+            android:id="@+id/template_calcul"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X ⊕ Y ="
+            android:textSize="18sp"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Champ de saisie pour le résultat -->
+        <EditText
+            android:id="@+id/template_resultat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="4"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+</LinearLayout>
