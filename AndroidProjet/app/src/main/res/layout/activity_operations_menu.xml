@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_operations" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OperationsMenuActivity"> <com.google.android.material.appbar.MaterialToolbar
+    android:id="@+id/toolbar_operations"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_alignParentTop="true"
+    android:background="?attr/colorPrimary"
+    app:title="Opérations Mathématiques" app:navigationIcon="?attr/homeAsUpIndicator" app:titleTextColor="@color/white" />
+
+    <TextView
+        android:id="@+id/tv_choose_operation_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar_operations"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text="Choisissez une opération :"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_choose_operation_label"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_addition"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Addition (+)" />
+
+        <Button
+            android:id="@+id/btn_soustraction"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Soustraction (-)" />
+
+        <Button
+            android:id="@+id/btn_multiplication"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Multiplication (x)" />
+
+        <Button
+            android:id="@+id/btn_division"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="Division (/)" />
+
+    </LinearLayout>
+
+</RelativeLayout>

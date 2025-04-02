@@ -2,39 +2,64 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:id="@+id/main"  android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MenuActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
         app:logo="@drawable/favicon"
-        app:titleTextColor="@color/white" />
-    
+        app:title="Menu Principal" app:titleTextColor="@color/white" />
+
     <TextView
+        android:id="@+id/tv_welcome_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/choisis_ton_exercice"
-        />
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="@string/bienvenue" android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <TextView
+        android:id="@+id/tv_choose_exercise_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_welcome_message"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="@string/choisis_ton_exercice" />
+
+    <LinearLayout
+        android:id="@+id/ll_activity_buttons"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_below="@id/tv_choose_exercise_label"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal" android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_addition"
+            style="@style/Widget.MaterialComponents.Button" android:layout_width="300dp" android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" android:text="@string/math_matiques" />
+
+        <Button
+            android:id="@+id/button_multiplication"
+            style="@style/Widget.MaterialComponents.Button" android:layout_width="300dp" android:layout_height="wrap_content"
+            android:text="@string/culture_g_n_rale" />
+
+    </LinearLayout>
 
     <Button
-        android:id="@+id/button_addition"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_logout"
+        style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mathématiques"
-        android:width="300dp"
-        />
-
-    <Button
-        android:id="@+id/button_multiplication"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Culture générale"
-        android:width="300dp"
-        />
-
-</RelativeLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:padding="20dp"
+        android:text="@string/logout"
+        app:backgroundTint="@color/logout_button_red"  android:textColor="@android:color/white" />/> </RelativeLayout>

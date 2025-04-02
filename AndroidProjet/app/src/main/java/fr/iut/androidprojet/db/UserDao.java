@@ -26,4 +26,7 @@ public interface UserDao {
     @Update
     void update(User user);
 
+    @Query("SELECT * FROM users WHERE id = :userId")
+    User read(long userId);
+
 }
