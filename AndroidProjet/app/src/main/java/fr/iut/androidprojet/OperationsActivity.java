@@ -4,24 +4,26 @@ import android.content.Intent;
 import android.graphics.Color; // Pour le feedback couleur
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale; // Pour formater les nombres décimaux
-import java.util.Random;
+import java.util.Locale;
 
 // Importer les modèles
+import fr.iut.androidprojet.db.DatabaseClient;
 import fr.iut.androidprojet.modele.Operation;
 import fr.iut.androidprojet.modele.OperationEnum;
-// Importer l'exception si vous l'utilisez (ex: division par zéro)
-// import fr.iut.androidprojet.modele.ErreurOperationException;
+import fr.iut.androidprojet.modele.TableOperation;
+
 
 
 public class OperationsActivity extends AppCompatActivity {
@@ -33,10 +35,11 @@ public class OperationsActivity extends AppCompatActivity {
 
     // Données de l'activité
     private OperationEnum currentOperationType;
-    private List<Operation> operationsList;
+    private TableOperation tableOperation;
     private int currentOperationIndex = 0;
     private int score = 0;
-    private Random random = new Random();
+    // private Random random = new Random();
+
 
     // Vues UI
     private TextView tvOperation;
@@ -44,104 +47,122 @@ public class OperationsActivity extends AppCompatActivity {
     private Button btnValidate;
     private TextView tvProgress;
     private TextView tvFeedback;
+    private Toolbar toolbar;
+    private LinearLayout llEndButtons; // Layout contenant les boutons de fin
+    private Button btnRestart;
+    private Button btnChangeExercise;
+    private Button btnViewCorrection;
+
+    // Db instance
+    private DatabaseClient mDb;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_operation); // Utiliser le nouveau layout
+        setContentView(R.layout.activity_operation);
 
-        // Initialiser les vues
+        toolbar = findViewById(R.id.toolbar_operation); // Récupérer la Toolbar via son ID
+        setSupportActionBar(toolbar); // Définir comme ActionBar
+        // Afficher le bouton retour (Up button)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+
+        // Initialiser les vues (inchangé)
         tvOperation = findViewById(R.id.tv_operation);
         etAnswer = findViewById(R.id.et_answer);
         btnValidate = findViewById(R.id.btn_validate);
         tvProgress = findViewById(R.id.tv_progress);
         tvFeedback = findViewById(R.id.tv_feedback);
+        llEndButtons = findViewById(R.id.ll_end_buttons);
+        btnRestart = findViewById(R.id.btn_restart);
+        btnChangeExercise = findViewById(R.id.btn_change_exercise);
+        btnViewCorrection = findViewById(R.id.btn_view_correction);
 
-        // Récupérer le type d'opération depuis l'Intent
+        mDb = DatabaseClient.getInstance(getApplicationContext()); // Décommenté si besoin
+
+        // Récupérer le type d'opération depuis l'Intent (inchangé)
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(OperationsMenuActivity.EXTRA_OPERATION_TYPE)) {
             currentOperationType = (OperationEnum) intent.getSerializableExtra(OperationsMenuActivity.EXTRA_OPERATION_TYPE);
 
             if (currentOperationType != null) {
-                setTitle("Exercice: " + currentOperationType.name()); // Mettre à jour le titre de l'activité
+                setTitle("Exercice: " + currentOperationType.name());
                 Log.i("OperationActivity", "Type d'opération reçu : " + currentOperationType.name());
 
-                // Générer la liste des opérations
-                generateOperations(NOMBRE_OPERATIONS);
+                try {
+                    tableOperation = new TableOperation(currentOperationType, NOMBRE_OPERATIONS);
+                    Log.i("OperationActivity", "TableOperation créée avec " + tableOperation.getNbOperations() + " opérations.");
+                    // Vérifier si la table a bien été remplie (facultatif)
+                    if (tableOperation.getOperations() == null || tableOperation.getNbOperations() == 0 || tableOperation.getOperation(0) == null) {
+                        throw new IllegalStateException("TableOperation n'a pas généré d'opérations.");
+                    }
+                } catch (Exception e) {
+                    // Attraper les erreurs potentielles de TableOperation ou OperationUtilitaire
+                    Log.e("OperationActivity", "Erreur lors de la création de TableOperation", e);
+                    handleError("Impossible de générer les opérations.");
+                    return;
+                }
+                // -----------------------------------------------------------
 
                 // Afficher la première opération
                 displayCurrentOperation();
 
             } else {
                 handleError("Type d'opération invalide reçu.");
-                return; // Quitter si erreur
+                return;
             }
         } else {
             handleError("Aucun type d'opération fourni.");
-            return; // Quitter si erreur
+            return;
         }
 
-        // Configurer le listener du bouton Valider
+        // Configurer le listener du bouton Valider (inchangé dans sa structure)
         btnValidate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 validateAnswer();
             }
         });
+
+        // --- AJOUT : Configurer les listeners des nouveaux boutons ---
+        btnRestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                restartExercise();
+            }
+        });
+
+        btnChangeExercise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Simplement terminer l'activité pour retourner au menu précédent
+                finish();
+            }
+        });
+
+        btnViewCorrection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchCorrectionActivity();
+            }
+        });
     }
 
-    /**
-     * Génère une liste d'opérations du type courant.
-     * @param count Le nombre d'opérations à générer.
-     */
-    private void generateOperations(int count) {
-        operationsList = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            double operand1 = generateRandomOperand();
-            double operand2 = generateRandomOperand();
-
-            // Cas particulier pour la division: éviter division par zéro
-            if (currentOperationType == OperationEnum.DIVISION) {
-                while (operand2 == 0) { // Re-générer si operande2 est 0
-                    operand2 = generateRandomOperand();
-                    Log.d("GenerateOps", "Division: Opérande 2 était 0, regénéré: " + operand2);
-                }
-                // Optionnel: S'assurer que la division tombe "juste" ou dans une certaine plage?
-                // Pour l'instant, on garde les doubles.
-            }
-
-            // Cas particulier pour soustraction: éviter résultats négatifs si non désiré
-            if (currentOperationType == OperationEnum.SOUSTRACTION) {
-                // S'assurer que operande1 >= operande2 pour éviter résultats négatifs
-                if (operand1 < operand2) {
-                    // Échanger les opérandes
-                    double temp = operand1;
-                    operand1 = operand2;
-                    operand2 = temp;
-                }
-            }
-
-            try {
-                // Utiliser l'enum pour obtenir la bonne instance d'opération
-                Operation op = currentOperationType.getOperation(operand1, operand2);
-                operationsList.add(op);
-            } catch (IllegalArgumentException e) {
-                Log.e("GenerateOps", "Erreur lors de la création de l'opération", e);
-                // Gérer l'erreur si nécessaire (ex: sauter cette opération)
-            }
-
+    /*
+    * Gérer le clic sur la flèche retour de la Toolbar
+    * */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Gérer la flèche retour (android.R.id.home est l'ID standard)
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // Ferme l'activité actuelle et retourne à la précédente
+            return true;
         }
-        Log.i("GenerateOps", "Généré " + operationsList.size() + " opérations de type " + currentOperationType);
-    }
-
-    /**
-     * Génère une opérande aléatoire dans la plage définie.
-     * @return une valeur double aléatoire.
-     */
-    private double generateRandomOperand() {
-        // Génère un entier entre MIN et MAX inclus
-        return random.nextInt((MAX_OPERAND_VALUE - MIN_OPERAND_VALUE) + 1) + MIN_OPERAND_VALUE;
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -149,37 +170,46 @@ public class OperationsActivity extends AppCompatActivity {
      * Affiche l'opération actuelle dans l'interface utilisateur.
      */
     private void displayCurrentOperation() {
-        if (currentOperationIndex < operationsList.size()) {
-            Operation currentOp = operationsList.get(currentOperationIndex);
 
-            // !! IMPORTANT: Assurez-vous d'avoir corrigé Operation.toString() !!
-            // Ex: return this.getOperande1() + " " + operateur + " " + this.getOperande2() + " = ";
-            tvOperation.setText(currentOp.toString());
+        if (tableOperation != null && currentOperationIndex < tableOperation.getNbOperations()) {
+            // --- État "En cours d'exercice" ---
+            // Afficher/Cacher les bons boutons
+            btnValidate.setVisibility(View.VISIBLE);   // Valider est visible
+            btnViewCorrection.setVisibility(View.GONE); // Correction est cachée
+            llEndButtons.setVisibility(View.GONE);      // Boutons du bas sont cachés
 
-            // Mettre à jour la progression
-            tvProgress.setText(String.format(Locale.getDefault(), "Opération %d / %d", currentOperationIndex + 1, NOMBRE_OPERATIONS));
+            // Activer les champs/boutons nécessaires
+            etAnswer.setEnabled(true);
+            btnValidate.setEnabled(true); // S'assurer qu'il est actif
 
-            // Vider le champ de réponse et le feedback
-            etAnswer.setText("");
-            tvFeedback.setText("");
-            tvFeedback.setTextColor(Color.BLACK); // Remettre couleur par défaut
-
-            // Mettre le focus sur le champ de réponse
-            etAnswer.requestFocus();
-
+            // Afficher l'opération (code existant)
+            Operation currentOp = tableOperation.getOperation(currentOperationIndex);
+            if (currentOp != null) {
+                tvOperation.setText(currentOp.toString());
+                tvProgress.setText(String.format(Locale.getDefault(), "Opération %d / %d", currentOperationIndex + 1, tableOperation.getNbOperations()));
+                etAnswer.setText("");
+                tvFeedback.setText("");
+                tvFeedback.setTextColor(Color.BLACK);
+                etAnswer.requestFocus();
+            } else {
+                handleError("Erreur interne (opération non trouvée).");
+            }
         } else {
-            // Toutes les opérations sont terminées
-            showResults();
+            if (tableOperation != null) {
+                showResults();
+            }
         }
     }
+
+
 
     /**
      * Valide la réponse de l'utilisateur pour l'opération actuelle.
      */
     private void validateAnswer() {
-        if (currentOperationIndex >= operationsList.size()) {
-            Log.w("Validate", "Validation appelée alors que toutes les opérations sont terminées.");
-            return; // Ne rien faire si terminé
+        if (tableOperation == null || currentOperationIndex >= tableOperation.getNbOperations()) {
+            Log.w("Validate", "Validation appelée alors que terminé ou tableOperation non initialisée.");
+            return;
         }
 
         String answerString = etAnswer.getText().toString().trim();
@@ -190,48 +220,58 @@ public class OperationsActivity extends AppCompatActivity {
         }
 
         try {
-            // Convertir la réponse en double
+            // 1. Parser la réponse de l'utilisateur
             double userAnswer = Double.parseDouble(answerString);
-            Operation currentOp = operationsList.get(currentOperationIndex);
-            double correctAnswer = currentOp.calculResultat();
 
-            // Comparer les réponses (attention aux doubles !)
-            // Utiliser une petite marge d'erreur pour les comparaisons de double
-            double epsilon = 0.0001;
-            if (Math.abs(userAnswer - correctAnswer) < epsilon) {
+            // 2. Obtenir l'opération courante
+            Operation currentOp = tableOperation.getOperation(currentOperationIndex);
+
+            // ---=== MODIFICATION ICI : Enregistrer la réponse utilisateur ===---
+            try {
+                // 3. Enregistrer la réponse de l'utilisateur DANS l'objet Operation
+                // Ceci permet à la méthode isReponseJuste() de fonctionner correctement
+                // et rend getNbReponsesJustes() de TableOperation utilisable à la fin.
+                currentOp.setReponseUtilisateur(userAnswer);
+            } catch (Exception e) { // Utilisez ErreurOperationException si vous l'avez définie et décommentée
+                Log.e("ValidateAnswer", "Erreur durant setReponseUtilisateur", e);
+                // Afficher une erreur ou gérer spécifiquement si besoin
+                tvFeedback.setText("Erreur interne lors de l'enregistrement de la réponse.");
+                tvFeedback.setTextColor(Color.RED);
+                // Décider si on doit arrêter ou continuer malgré tout
+                // return; // Pourrait être une option si l'erreur est bloquante
+            }
+            // ---=== FIN DE LA MODIFICATION ===---
+
+
+            // 4. Vérifier si la réponse enregistrée est juste en utilisant la méthode de l'objet Operation
+            //    (plutôt que de refaire la comparaison avec epsilon ici)
+            if (currentOp.isReponseJuste()) {
                 // Réponse correcte
-                score++;
+                score++; // Mettre à jour le score local de l'activité
                 tvFeedback.setText("Correct !");
                 tvFeedback.setTextColor(Color.parseColor("#006400")); // Vert foncé
             } else {
                 // Réponse incorrecte
+                // Récupérer la vraie réponse pour l'afficher
+                double correctAnswer = currentOp.calculResultat();
                 tvFeedback.setText(String.format(Locale.getDefault(), "Incorrect. La réponse était %.2f", correctAnswer));
                 tvFeedback.setTextColor(Color.RED);
             }
 
-            // Passer à l'opération suivante après un court délai (ou immédiatement)
-            // Option 1: Immédiatement
+            // 5. Passer à l'opération suivante
             currentOperationIndex++;
-            displayCurrentOperation();
-
-            // Option 2: Avec délai pour voir le feedback (plus complexe, nécessite un Handler)
-            // new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            //      currentOperationIndex++;
-            //      displayCurrentOperation();
-            // }, 1500); // Délai de 1.5 secondes
-
+            displayCurrentOperation(); // Affiche la suivante ou les résultats finaux
 
         } catch (NumberFormatException e) {
             // L'utilisateur n'a pas entré un nombre valide
             tvFeedback.setText("Entrée invalide. Utilisez des chiffres.");
             tvFeedback.setTextColor(Color.RED);
-            Log.w("Validate", "Erreur de parsing de la réponse: " + answerString, e);
-        } catch (ArithmeticException e) {
-            // Gérer spécifiquement la division par zéro si elle peut survenir ici
+            Log.w("Validate", "Erreur de parsing: " + answerString, e);
+        } catch (ArithmeticException e) { // Ex: Division par zéro dans calculResultat (si pas déjà géré avant)
             tvFeedback.setText("Erreur: " + e.getMessage());
             tvFeedback.setTextColor(Color.RED);
             Log.e("Validate", "Erreur arithmétique", e);
-            // Passer à la suivante ou bloquer ? Pour l'instant on passe.
+            // On passe quand même à la suivante pour ne pas bloquer
             currentOperationIndex++;
             displayCurrentOperation();
         }
@@ -241,18 +281,72 @@ public class OperationsActivity extends AppCompatActivity {
      * Affiche les résultats finaux.
      */
     private void showResults() {
-        Log.i("OperationActivity", "Série terminée. Score: " + score + "/" + NOMBRE_OPERATIONS);
-        // Afficher le score final
+        Log.i("OperationActivity", "Série terminée. Score: " + score + "/" + tableOperation.getNbOperations());
+
+        // Mettre à jour les textes (inchangé)
         tvOperation.setText("Terminé !");
-        tvFeedback.setText(String.format(Locale.getDefault(), "Votre score : %d / %d", score, NOMBRE_OPERATIONS));
+        tvProgress.setText("Fin de la série");
+        tvFeedback.setText(String.format(Locale.getDefault(), "Votre score : %d / %d", score, tableOperation.getNbOperations()));
         tvFeedback.setTextColor(Color.BLUE);
 
-        // Désactiver le champ de réponse et le bouton
+        // --- État "Fin d'exercice" ---
+        // Désactiver la saisie
         etAnswer.setEnabled(false);
-        btnValidate.setEnabled(false);
 
-        // Option: Afficher un bouton pour recommencer ou retourner au menu
-        // ...
+        // Cacher Valider, Afficher Correction au même endroit
+        btnValidate.setVisibility(View.GONE);       // Cacher Valider
+        btnViewCorrection.setVisibility(View.VISIBLE); // Afficher Correction
+
+        // Afficher les boutons du bas (Recommencer / Changer)
+        llEndButtons.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Réinitialise l'état et lance une nouvelle série d'opérations. (MODIFIÉ)
+     */
+    private void restartExercise() {
+        Log.i("OperationActivity", "Redémarrage de l'exercice.");
+        // Réinitialiser les compteurs
+        currentOperationIndex = 0;
+        score = 0;
+
+        // Générer une NOUVELLE série d'opérations (inchangé)
+        try {
+            tableOperation = new TableOperation(currentOperationType, NOMBRE_OPERATIONS);
+            // ... (logs et vérification) ...
+        } catch (Exception e) {
+            // ... (gestion erreur) ...
+            return;
+        }
+
+        // Afficher la première opération de la nouvelle série
+        // displayCurrentOperation va maintenant automatiquement configurer
+        // la visibilité correcte des boutons (Valider visible, autres cachés).
+        displayCurrentOperation();
+    }
+
+    private void launchCorrectionActivity() {
+        // Vérifier si les données existent
+        if (tableOperation == null || tableOperation.getOperations() == null) {
+            Toast.makeText(this, "Impossible d'afficher la correction (pas de données).", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Créer l'intent pour CorrectionActivity
+        Intent intent = new Intent(OperationsActivity.this, CorrectionActivity.class);
+
+        // Récupérer le tableau d'opérations depuis TableOperation
+        Operation[] operations = tableOperation.getOperations();
+
+        // ===> PAS DE CHANGEMENT NÉCESSAIRE ICI <===
+        // Si Operation implements Serializable (et ses filles aussi),
+        // Android sait comment mettre le tableau dans l'Intent.
+        intent.putExtra("OPERATIONS_ARRAY", operations);
+        // ===> FIN PAS DE CHANGEMENT NÉCESSAIRE <===
+
+
+        Log.d("LaunchCorrection", "Passage de " + operations.length + " opérations (Serializable) à CorrectionActivity.");
+        startActivity(intent); // Lancer l'activité de correction
     }
 
 

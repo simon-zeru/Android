@@ -1,6 +1,8 @@
 package fr.iut.androidprojet.modele;
 
-public class Soustraction extends Operation {
+import java.io.Serializable;
+
+public class Soustraction extends Operation implements Serializable {
 
     public Soustraction(double operande1, double operande2) {
         super(operande1, operande2, '-');

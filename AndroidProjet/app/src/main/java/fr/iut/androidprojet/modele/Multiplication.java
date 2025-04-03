@@ -1,6 +1,8 @@
 package fr.iut.androidprojet.modele;
 
-public class Multiplication extends Operation {
+import java.io.Serializable;
+
+public class Multiplication extends Operation implements Serializable {
 
 
     public Multiplication( double operande1, double operande2) {

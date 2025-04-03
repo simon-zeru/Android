@@ -4,13 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_operations" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OperationsMenuActivity"> <com.google.android.material.appbar.MaterialToolbar
+    tools:context=".OperationsMenuActivity">
+    <com.google.android.material.appbar.MaterialToolbar
     android:id="@+id/toolbar_operations"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:layout_alignParentTop="true"
     android:background="?attr/colorPrimary"
-    app:title="Opérations Mathématiques" app:navigationIcon="?attr/homeAsUpIndicator" app:titleTextColor="@color/white" />
+    app:title="Opérations Mathématiques"
+    app:navigationIconTint="@android:color/white"
+    app:navigationIcon="?attr/homeAsUpIndicator"
+    app:titleTextColor="@color/white"
+        />
 
     <TextView
         android:id="@+id/tv_choose_operation_label"

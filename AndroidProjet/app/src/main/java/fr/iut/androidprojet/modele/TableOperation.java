@@ -18,7 +18,16 @@ public class TableOperation {
 
     private void initialisation() {
         for (int i = 0; i < nbOperations; i++) {
-            operations[i] = typeOperation.getOperation(OperationUtilitaire.randomDouble(), OperationUtilitaire.randomDouble());
+            double operande1 = OperationUtilitaire.randomDouble(); // Ou randomInt(min, max)
+            double operande2 = OperationUtilitaire.randomDouble(); // Ou randomInt(min, max)
+
+            // Logique spécifique avant création
+            if (typeOperation == OperationEnum.DIVISION) {
+                while (Math.abs(operande2) < 0.0001) { // Vérifier si proche de zéro pour double
+                    operande2 = OperationUtilitaire.randomDouble(); // Re-générer
+                }
+            }
+            operations[i] = typeOperation.getOperation(operande1, operande2);
         }
     }
 

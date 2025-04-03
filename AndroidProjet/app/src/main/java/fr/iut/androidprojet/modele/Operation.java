@@ -1,6 +1,8 @@
 package fr.iut.androidprojet.modele;
 
-public abstract class Operation {
+import java.io.Serializable;
+
+public abstract class Operation implements Serializable {
     private double operande1;
     private double operande2;
     private Double reponseUtilisateur;
@@ -22,10 +24,12 @@ public abstract class Operation {
 
     public void setReponseUtilisateur(Double reponse) throws ErreurOperationException {
         this.reponseUtilisateur = reponse;
-//        if ( !isReponseJuste() ) {
-//            throw new ErreurOperationException("La réponse n'est pas correcte, réessayez !");
-//        }
     }
+
+    public Double getReponseUtilisateur() {
+        return reponseUtilisateur;
+    }
+
 
 
     public boolean isReponseJuste() {
@@ -36,6 +40,6 @@ public abstract class Operation {
 
     @Override
     public String toString() {
-        return this.getOperande2() + operateur + this.getOperande2() + " = ";
+        return this.getOperande1() + " " + operateur + " " + this.getOperande2() + " = ";
     }
 }
